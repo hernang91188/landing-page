@@ -1,10 +1,14 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import { MercadoPagoConfig, Preference } from "mercadopago";
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Initialize MercadoPago
 const client = new MercadoPagoConfig({
-    accessToken: "MERCADOPAGO_ACCESS_TOKEN"
+    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || "YOUR_ACCESS_TOKEN"
 });
 
 const app = express();
@@ -13,11 +17,22 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-// Toggle for payment requirement (Default: false as requested)
-const isPaymentRequires = false;
+// Parse IS_PAYMENT_REQUIRES as boolean
+const isPaymentRequires = process.env.IS_PAYMENT_REQUIRES === 'true';
 
 app.get("/config", (req, res) => {
-    res.json({ isPaymentRequires });
+    res.json({
+        isPaymentRequires,
+        googleCalendarUrl: process.env.GOOGLE_CALENDAR_URL
+    });
+});
+
+app.get("/social-links", (req, res) => {
+    res.json({
+        linkedin: process.env.LINKEDIN_URL,
+        twitter: process.env.TWITTER_URL,
+        email: process.env.EMAIL
+    });
 });
 
 app.post("/create_preference", async (req, res) => {

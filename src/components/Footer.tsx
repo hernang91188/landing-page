@@ -1,6 +1,31 @@
 import { Linkedin, Twitter, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const Footer = () => {
+    const [socialLinks, setSocialLinks] = useState({
+        linkedin: '#',
+        twitter: '#',
+        email: '#'
+    });
+
+    useEffect(() => {
+        const fetchSocialLinks = async () => {
+            try {
+                const response = await fetch('/api/mp/social-links');
+                const data = await response.json();
+                setSocialLinks({
+                    linkedin: data.linkedin || '#',
+                    twitter: data.twitter || '#',
+                    email: data.email ? `mailto:${data.email}` : '#'
+                });
+            } catch (error) {
+                console.error('Failed to fetch social links:', error);
+            }
+        };
+
+        fetchSocialLinks();
+    }, []);
+
     return (
         <footer className="bg-navy-950 text-cream-200 py-16 border-t border-navy-800">
             <div className="container mx-auto px-6">
@@ -14,13 +39,13 @@ const Footer = () => {
                             build the systems they need to scale with confidence.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
+                            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
                                 <Linkedin size={18} />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
+                            <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
                                 <Twitter size={18} />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
+                            <a href={socialLinks.email} className="w-10 h-10 rounded-full bg-navy-900 flex items-center justify-center hover:bg-gold-500 hover:text-navy-900 transition-all">
                                 <Mail size={18} />
                             </a>
                         </div>

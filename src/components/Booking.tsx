@@ -8,6 +8,7 @@ const Booking = () => {
     const [isPaid, setIsPaid] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isPaymentRequires, setIsPaymentRequires] = useState(true);
+    const [calendarUrl, setCalendarUrl] = useState('');
 
     useEffect(() => {
         const checkConfig = async () => {
@@ -18,6 +19,7 @@ const Booking = () => {
 
                 // Store the payment requirement config
                 setIsPaymentRequires(data.isPaymentRequires !== false);
+                setCalendarUrl(data.googleCalendarUrl || '');
 
                 // If payment IS required, check for URL status
                 if (data.isPaymentRequires !== false) {
@@ -101,7 +103,7 @@ const Booking = () => {
                     <div className="lg:col-span-3 bg-cream-100 rounded-sm overflow-hidden h-[600px] shadow-2xl relative">
                         {isPaid ? (
                             <iframe
-                                src="https://calendar.app.google/WXkzJuEtrcmt8hBn9?gv=true"
+                                src={calendarUrl}
                                 style={{ border: 0 }}
                                 width="100%"
                                 height="100%"
