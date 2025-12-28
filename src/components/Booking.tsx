@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 const Booking = () => {
     const [isPaid, setIsPaid] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPaymentRequires, setIsPaymentRequires] = useState(true);
 
     useEffect(() => {
         const checkConfig = async () => {
@@ -15,20 +16,20 @@ const Booking = () => {
                 const response = await fetch("/api/mp/config");
                 const data = await response.json();
 
-                if (data.isPaymentRequires === false) {
-                    setIsPaid(true);
-                    return;
-                }
+                // Store the payment requirement config
+                setIsPaymentRequires(data.isPaymentRequires !== false);
 
                 // If payment IS required, check for URL status
-                const params = new URLSearchParams(window.location.search);
-                const status = params.get('status');
+                if (data.isPaymentRequires !== false) {
+                    const params = new URLSearchParams(window.location.search);
+                    const status = params.get('status');
 
-                if (status === 'approved') {
-                    setIsPaid(true);
-                    window.history.replaceState({}, '', window.location.pathname + '#booking');
-                    // Scroll to booking section
-                    document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+                    if (status === 'approved') {
+                        setIsPaid(true);
+                        window.history.replaceState({}, '', window.location.pathname + '#booking');
+                        // Scroll to booking section
+                        document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+                    }
                 }
             } catch (error) {
                 console.error("Failed to fetch config, defaulting to locked:", error);
@@ -39,6 +40,13 @@ const Booking = () => {
     }, []);
 
     const handlePayment = async () => {
+        // If payment is not required, just unlock the calendar
+        if (!isPaymentRequires) {
+            setIsPaid(true);
+            return;
+        }
+
+        // Otherwise, proceed with MercadoPago payment flow
         setIsLoading(true);
         const url = await createPreference();
         setIsLoading(false);
@@ -123,7 +131,7 @@ const Booking = () => {
                                     ) : (
                                         <>
                                             <CreditCard size={20} />
-                                            <span>Secure Your Spot</span>
+                                            <span>{isPaymentRequires ? 'Secure Your Spot' : 'Access Calendar'}</span>
                                         </>
                                     )}
                                 </motion.button>
