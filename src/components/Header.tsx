@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,9 +17,10 @@ const Header = () => {
     }, []);
 
     const navLinks = [
-        { name: 'Services', href: '#services' },
-        { name: 'Process', href: '#process' },
-        { name: 'About', href: '#about' },
+        { name: 'Services', href: '/#services', isAnchor: false },
+        { name: 'Process', href: '/#process', isAnchor: false },
+        { name: 'About', href: '/#about', isAnchor: false },
+        { name: 'Blog', href: '/blog', isAnchor: false },
     ];
 
     return (
@@ -29,27 +31,27 @@ const Header = () => {
             )}
         >
             <div className="container mx-auto px-6 flex items-center justify-between">
-                <a href="#" className="text-2xl font-serif font-bold text-navy-900 tracking-tight">
+                <Link to="/" className="text-2xl font-serif font-bold text-navy-900 tracking-tight">
                     Align<span className="text-gold-500">.</span>
-                </a>
+                </Link>
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center space-x-8">
                     {navLinks.map((link) => (
-                        <a
+                        <Link
                             key={link.name}
-                            href={link.href}
+                            to={link.href}
                             className="text-navy-800 hover:text-gold-500 transition-colors text-sm font-medium tracking-wide"
                         >
                             {link.name}
-                        </a>
+                        </Link>
                     ))}
-                    <a
-                        href="#booking"
+                    <Link
+                        to="/#booking"
                         className="px-6 py-2.5 bg-navy-900 text-cream-100 text-sm font-medium rounded-sm hover:bg-navy-800 transition-colors"
                     >
                         Book a Call
-                    </a>
+                    </Link>
                 </nav>
 
                 {/* Mobile Menu Button */}
@@ -72,22 +74,22 @@ const Header = () => {
                     >
                         <nav className="flex flex-col p-6 space-y-4">
                             {navLinks.map((link) => (
-                                <a
+                                <Link
                                     key={link.name}
-                                    href={link.href}
+                                    to={link.href}
                                     onClick={() => setMobileMenuOpen(false)}
                                     className="text-navy-800 text-lg font-serif"
                                 >
                                     {link.name}
-                                </a>
+                                </Link>
                             ))}
-                            <a
-                                href="#booking"
+                            <Link
+                                to="/#booking"
                                 onClick={() => setMobileMenuOpen(false)}
                                 className="inline-block text-center px-6 py-3 bg-navy-900 text-cream-100 text-sm font-medium rounded-sm"
                             >
                                 Book a Call
-                            </a>
+                            </Link>
                         </nav>
                     </motion.div>
                 )}
